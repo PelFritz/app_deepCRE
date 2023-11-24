@@ -14,19 +14,24 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 st.title('DeepCRE')
 st.subheader('Gene expression predictive models for plant species')
 st.write("""
-These models were trained to predict the probability of a gene from a plant species being highly expressed. The expect 
+These models were trained to predict the probability of a gene from a plant species being highly expressed. They expect 
 as inputs, the flanking regions of genes. We define flanking regions as 1500 nt upstream and 1500 nt downstream of the 
-your gene of interest. sequences should look like the example
-sequence GCCGTCCGBREAKGCGGCGCGT. Notice there is a word 'BREAK' in the sequence, this is not part of the normal DNA
-sequence, but it tells us were your upstream sequence ends and were the downstream begins. The sequence in your fasta is\n
+your gene of interest. The upstream sequence is obtained by anchoring at the gene start, taking 1000 nt before 
+and 500 nt after it. This gives you 1500 nt upstream. The downstream sequence is obtained by anchoring on the gene end
+taking 500 nt before and 1000 nt after it. This also gives you 1500 nt downstream.\n
+ 
+Sequences should look like the example sequence GCCGTCCGBREAKGCGGCGCGT. Notice there is a word 'BREAK' in the sequence,
+this is not part of the normal DNA sequence, but it tells us were your upstream sequence ends and were the downstream 
+begins. The sequence in your fasta is\n
 \>AT10g0560\n
 GCCGTCCGBREAKGCGGCGCGT
 """)
+st.image('extraction.png', caption='How to extract flanking sequences')
 st.subheader('Model selection and file upload')
 st.write("""Select a model to use for predictions. The SSR model is trained on Arabidopsis thaliana, while
-the MSR model is trained on 4 species: A. thaliana, S. lycopersicum, S. bicolor and Z. mays.""")
-model_type = st.selectbox('Model', options=['SSR', 'MSR'])
-saved_models = {'SSR':'arabidopsis_model_1_promoter_terminator.h5', 'MSR': 'super_msr_model.h5'}
+the Siamese MSR model is trained on 4 species: A. thaliana, S. lycopersicum, S. bicolor and Z. mays.""")
+model_type = st.selectbox('Model', options=['SSR', 'Siamese MSR'])
+saved_models = {'SSR': 'arabidopsis_model_1_promoter_terminator.h5', 'Siamese MSR': 'siamese_super_msr_model.h5'}
 input_fasta = st.file_uploader(label="""
 Upload a fasta file from your local machine containing you sequence of interest.
 """)

@@ -42,6 +42,8 @@ def prepare_seqs(fasta_file):
 
 
 def compute_scores(onehot_data, keras_model):
+    shap.explainers._deep.deep_tf.op_handlers["AddV2"] = shap.explainers._deep.deep_tf.passthrough
+    shap.explainers._deep.deep_tf.op_handlers["FusedBatchNormV3"] = shap.explainers._deep.deep_tf.passthrough
     dinuc_shuff_explainer = shap.DeepExplainer(model=(keras_model.input, keras_model.output[:, 0]),
                                                data=shuffle_several_times)
     raw_shap_explanations = dinuc_shuff_explainer.shap_values(onehot_data, check_additivity=False)
