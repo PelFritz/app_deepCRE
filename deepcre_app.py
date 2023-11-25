@@ -29,12 +29,10 @@ GCCGTCCGBREAKGCGGCGCGT
 col1, _ = st.columns(2)
 with col1:
     st.image('extraction.png', caption='How to extract flanking sequences')
-st.subheader('Model selection and file upload')
-st.write("""Select a model to use for predictions. The SSR model is trained on Arabidopsis thaliana, while
-the Siamese MSR model is trained on 4 species: A. thaliana, S. lycopersicum, S. bicolor and Z. mays.""")
-model_type = st.sidebar.selectbox('Model', options=['SSR', 'Siamese MSR'])
+model_type = st.sidebar.selectbox("""Select a model to use for predictions. The SSR model is trained on Arabidopsis thaliana, while
+the Siamese MSR model is trained on 4 species: A. thaliana, S. lycopersicum, S. bicolor and Z. mays.""", options=['SSR', 'Siamese MSR'])
 saved_models = {'SSR': 'arabidopsis_model_1_promoter_terminator.h5', 'Siamese MSR': 'siamese_super_msr_model.h5'}
-input_fasta = st.file_uploader(label="""
+input_fasta = st.sidebar.file_uploader(label="""
 Upload a fasta file from your local machine containing you sequence of interest.
 """)
 
@@ -101,6 +99,16 @@ if vis_group == "High vs Low":
             chart_hl_line.update_xaxes(ticktext=[-1000, -500, 'TSS', 'TTS', 500, 1000],
                                        tickvals=[0, 499, 999, 2019, 2519, 3019])
             chart_hl_line.update_yaxes(tickformat=".4f")
+            if region == 'UTR':
+                chart_hl_line.add_vrect(x0=999, x1=999 + 500, fillcolor='grey', opacity=0.1, line_width=0,
+                                        annotation_text="5'UTR", annotation_position="top left")
+                chart_hl_line.add_vrect(x0=1519, x1=1519 + 500, fillcolor='grey', opacity=0.1, line_width=0,
+                                        annotation_text="3'UTR", annotation_position="top left")
+            else:
+                chart_hl_line.add_vrect(x0=0, x1=999, fillcolor='blue', opacity=0.05, line_width=0,
+                                        annotation_text="promoter", annotation_position="top left")
+                chart_hl_line.add_vrect(x0=1519 + 500, x1=3019, fillcolor='blue', opacity=0.05, line_width=0,
+                                        annotation_text="terminator", annotation_position="top left")
         st.plotly_chart(chart_hl_line, use_container_width=True)
 
     with tab2_hl:
