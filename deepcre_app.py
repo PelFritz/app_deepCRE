@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 st.set_page_config(layout='wide')
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
-st.title(':red[DeepCRE]')
+st.title(':red[DeepCRE Toolkit]')
 st.subheader('Gene expression predictive models for plant species')
 
 
