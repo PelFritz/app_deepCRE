@@ -12,12 +12,15 @@ st.set_page_config(layout='wide')
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 st.title(':red[DeepCRE Toolkit]')
-st.subheader('Gene expression predictive models for plant species')
+st.subheader('This tool predicts the probability that a gene will be expressed highly or lowly.')
 
 
 @st.cache_data
 def run_model(data, selected_model):
-    input_fasta = StringIO(data.getvalue().decode("utf-8"))
+    if data:
+        input_fasta = StringIO(data.getvalue().decode("utf-8"))
+    else:
+        input_fasta = "example.fa"
     onehot_seq, seq_ids = prepare_seqs(input_fasta)
     model = load_model(saved_models[selected_model])
     prediction = model.predict(onehot_seq).ravel()
@@ -42,6 +45,8 @@ with tab1main:
     begins. The sequence in your fasta is\n
     \>AT10g0560\n
     GCCGTCCGBREAKGCGGCGCGT
+    
+    If No file is provided the model will run on the default file
     """)
     col1, _ = st.columns(2)
     with col1:
@@ -51,8 +56,6 @@ with tab1main:
     saved_models = {'SSR': 'arabidopsis_model_1_promoter_terminator.h5', 'Siamese MSR': 'siamese_super_msr_model.h5'}
     input_fasta = st.sidebar.file_uploader(label="""Upload a fasta file""")
 
-    if input_fasta is None:
-        st.stop()
 
 with tab2main:
     saliency_scores, meta_df = run_model(input_fasta, model_type)
